@@ -7,11 +7,15 @@ import subprocess
 import shutil
 import threading
 import sys
+import re
 
 def resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
         return os.path.join(sys._MEIPASS, relative_path)
     return os.path.join(os.path.abspath("."), relative_path)
+
+def sanitize_filename(name):
+    return re.sub(r'[<>:"/\\|?*]', '', name)
 
 def download_and_concat(base_url, final_output, segment_dir="segments_temp", status_callback=print):
     os.makedirs(segment_dir, exist_ok=True)
@@ -123,10 +127,10 @@ class VideoDownloaderApp:
             with open(csv_path, newline='', encoding="utf-8") as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
-                    course_name = row["course_name"].strip()
-                    module_name = row["module_name"].strip()
-                    video_num = row["video_num"].strip()
-                    video_name = row["video_name"].strip()
+                    course_name = sanitize_filename(row["course_name"].strip())
+                    module_name = sanitize_filename(row["module_name"].strip())
+                    video_num = sanitize_filename(row["video_num"].strip())
+                    video_name = sanitize_filename(row["video_name"].strip())
                     base_url = row["base_url"].strip().rstrip('/')
 
                     final_filename = f"{video_num}_{video_name}.mp4"
