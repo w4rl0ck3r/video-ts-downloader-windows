@@ -123,16 +123,17 @@ class VideoDownloaderApp:
             with open(csv_path, newline='', encoding="utf-8") as csvfile:
                 reader = csv.DictReader(csvfile)
                 for row in reader:
-                    dir_name = row["dir_name"]
-                    video_num = row["video_num"]
-                    video_name = row["video_name"]
-                    base_url = row["base_url"].rstrip('/')
+                    course_name = row["course_name"].strip()
+                    module_name = row["module_name"].strip()
+                    video_num = row["video_num"].strip()
+                    video_name = row["video_name"].strip()
+                    base_url = row["base_url"].strip().rstrip('/')
 
                     final_filename = f"{video_num}_{video_name}.mp4"
-                    output_path = os.path.join("output", dir_name, final_filename)
+                    output_path = os.path.join("output", course_name, module_name, final_filename)
 
                     self.log(f"\n🔽 Starting download: {final_filename}")
-                    self.log(f"📂 Folder: {dir_name} | 🌐 Base URL: {base_url}")
+                    self.log(f"📚 Course: {course_name} | 📦 Module: {module_name} | 🌐 Base URL: {base_url}")
                     success = download_and_concat(base_url, output_path, status_callback=self.log)
 
                     if not success:
